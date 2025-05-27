@@ -11,13 +11,14 @@ class WeatherCubit extends Cubit<WeatherState> {
 
   WeatherCubit(this.repository) : super(WeatherInitial());
 
-  Future<void> getWeather(String city) async {
-    try {
-      emit(WeatherLoading());
-      final weather = await repository.fetchWeather(city);
-      emit(WeatherLoaded(weather));
-    } catch (_) {
-      emit(WeatherError('حدث خطأ أثناء جلب البيانات'));
-    }
+Future<void> getWeather(String city) async {
+  try {
+    emit(WeatherLoading());
+    final weather = await repository.fetchWeather(city);
+    final forecast = await repository.fetchFiveDayForecast(city);
+    emit(WeatherLoaded(weather, forecast));
+  } catch (_) {
+    emit(WeatherError('حدث خطأ أثناء جلب البيانات'));
   }
+}
 }

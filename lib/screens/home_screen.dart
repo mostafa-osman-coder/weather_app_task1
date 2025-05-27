@@ -32,17 +32,48 @@ class HomeScreen extends StatelessWidget {
                 if (state is WeatherLoading) {
                   return const CircularProgressIndicator();
                 } else if (state is WeatherLoaded) {
-                  final weather = state.weather;
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('المدينة: ${weather.city}'),
-                      Text('الحرارة: ${weather.temp}°C'),
-                      Text('الوصف: ${weather.description}'),
-                      Text('الرياح: ${weather.wind} م/ث'),
-                    ],
-                  );
-                } else if (state is WeatherError) {
+  final weather = state.weather;
+  final forecast = state.forecast;
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text('المدينة: ${weather.city}'),
+      Text('الحرارة: ${weather.temp}°C'),
+      Text('الوصف: ${weather.description}'),
+      const SizedBox(height: 16),
+      const Text('توقعات الأيام القادمة:'),
+      const SizedBox(height: 8),
+      SizedBox(
+        height: 120,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: forecast.length,
+          separatorBuilder: (_, __) => const SizedBox(width: 10),
+          itemBuilder: (context, index) {
+            final day = forecast[index];
+            return Container(
+              width: 100,
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade100,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('${day.temp}°C', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 4),
+                  Text(day.description),
+                ],
+              ),
+            );
+          },
+        ),
+      )
+    ],
+  );
+} else if (state is WeatherError) {
                   return Text(state.message, style: const TextStyle(color: Colors.red));
                 }
                 return const Text('أدخل المدينة أولاً');
