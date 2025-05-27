@@ -18,12 +18,12 @@ Future<void> getWeather(String city) async {
     emit(WeatherLoading());
     final weather = await repository.fetchWeather(city);
     final forecast = await repository.fetchFiveDayForecast(city);
-    await _cache.saveWeather(weather); // ✅ حفظ في الكاش
+    await _cache.saveWeather(weather);
     emit(WeatherLoaded(weather, forecast));
   } catch (_) {
     final cached = await _cache.getCachedWeather();
     if (cached != null) {
-      emit(WeatherLoaded(cached, [])); // ❗ بدون forecast
+      emit(WeatherLoaded(cached, [])); 
     } else {
       emit(WeatherError('فشل الاتصال ولا يوجد بيانات محفوظة.'));
     }

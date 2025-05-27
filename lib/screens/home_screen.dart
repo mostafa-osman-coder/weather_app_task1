@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:weather_app_task/cubits/cubit/weather_cubit.dart';
-import '../../utils/weather_icon_mapper.dart'; 
+import '../../utils/weather_icon_mapper.dart';
 
 class HomeScreen extends StatelessWidget {
   final TextEditingController controller = TextEditingController();
@@ -18,7 +18,7 @@ class HomeScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              //   search
+              // Search field
               TextField(
                 controller: controller,
                 onSubmitted: (value) {
@@ -38,7 +38,6 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 20),
 
               // Weather content
-
               Expanded(
                 child: BlocBuilder<WeatherCubit, WeatherState>(
                   builder: (context, state) {
@@ -51,7 +50,7 @@ class HomeScreen extends StatelessWidget {
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            // Primary card 
+                            // Weather card
                             Card(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16)),
@@ -120,7 +119,17 @@ class HomeScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 24),
 
-                            // Expectations
+                            // عرض رسالة الكاش في حال عدم وجود توقعات
+                            if (forecast.isEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: Text(
+                                  'Offline data shown. No forecast available.',
+                                  style: TextStyle(color: Colors.grey[700]),
+                                ),
+                              ),
+
+                            // Forecast label
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
@@ -133,6 +142,8 @@ class HomeScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 12),
+
+                            // Forecast cards
                             SizedBox(
                               height: 140,
                               child: ListView.builder(
@@ -141,9 +152,10 @@ class HomeScreen extends StatelessWidget {
                                 itemBuilder: (context, index) {
                                   final f = forecast[index];
                                   final dayName = DateFormat('EEE')
-                                      .format(DateTime.now().add(
-                                          Duration(days: index)));
-                                  final icon = getWeatherIcon(f.description);
+                                      .format(DateTime.now()
+                                          .add(Duration(days: index)));
+                                  final icon =
+                                      getWeatherIcon(f.description);
 
                                   return Container(
                                     width: 100,
@@ -189,14 +201,17 @@ class HomeScreen extends StatelessWidget {
                                   );
                                 },
                               ),
-                            )
+                            ),
                           ],
                         ),
                       );
                     } else if (state is WeatherError) {
                       return Center(
-                          child: Text(state.message,
-                              style: const TextStyle(color: Colors.red)));
+                        child: Text(
+                          state.message,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      );
                     }
                     return const Center(
                         child: Text('Search for a city to get weather.'));
