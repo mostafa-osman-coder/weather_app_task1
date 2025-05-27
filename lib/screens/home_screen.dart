@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:weather_app_task/cubits/cubit/weather_cubit.dart';
+import 'package:weather_app_task/cubits/weather_cubit/weather_cubit.dart';
 import '../../utils/weather_icon_mapper.dart';
 
 class HomeScreen extends StatelessWidget {
