@@ -18,7 +18,7 @@ class HomeScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              // 🔍 حقل البحث
+              //   search
               TextField(
                 controller: controller,
                 onSubmitted: (value) {
@@ -37,7 +37,8 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // 📦 محتوى الطقس
+              // Weather content
+
               Expanded(
                 child: BlocBuilder<WeatherCubit, WeatherState>(
                   builder: (context, state) {
@@ -50,7 +51,7 @@ class HomeScreen extends StatelessWidget {
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            // 🔷 الكارد الأساسي
+                            // Primary card 
                             Card(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16)),
@@ -119,7 +120,7 @@ class HomeScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 24),
 
-                            // 🔄 التوقعات
+                            // Expectations
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
