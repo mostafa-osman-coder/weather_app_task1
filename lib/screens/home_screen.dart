@@ -11,75 +11,181 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('تطبيق الطقس')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: controller,
-              onSubmitted: (value) {
-                context.read<WeatherCubit>().getWeather(value);
-              },
-              decoration: const InputDecoration(
-                labelText: 'أدخل اسم المدينة',
-                suffixIcon: Icon(Icons.search),
+      backgroundColor: Colors.blue[50],
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              // 🔍 حقل البحث
+              TextField(
+                controller: controller,
+                onSubmitted: (value) {
+                  context.read<WeatherCubit>().getWeather(value);
+                },
+                decoration: InputDecoration(
+                  hintText: 'Enter city name',
+                  filled: true,
+                  fillColor: Colors.white,
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            BlocBuilder<WeatherCubit, WeatherState>(
-              builder: (context, state) {
-                if (state is WeatherLoading) {
-                  return const CircularProgressIndicator();
-                } else if (state is WeatherLoaded) {
-  final weather = state.weather;
-  final forecast = state.forecast;
+              const SizedBox(height: 20),
 
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text('المدينة: ${weather.city}'),
-      Text('الحرارة: ${weather.temp}°C'),
-      Text('الوصف: ${weather.description}'),
-      const SizedBox(height: 16),
-      const Text('توقعات الأيام القادمة:'),
-      const SizedBox(height: 8),
-      SizedBox(
-        height: 120,
-        child: ListView.separated(
-          scrollDirection: Axis.horizontal,
-          itemCount: forecast.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 10),
-          itemBuilder: (context, index) {
-            final day = forecast[index];
-            return Container(
-              width: 100,
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.blue.shade100,
-                borderRadius: BorderRadius.circular(8),
+              // 📦 محتوى الطقس
+              Expanded(
+                child: BlocBuilder<WeatherCubit, WeatherState>(
+                  builder: (context, state) {
+                    if (state is WeatherLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (state is WeatherLoaded) {
+                      final weather = state.weather;
+                      final forecast = state.forecast;
+
+                      return Column(
+                        children: [
+                          // 🔷 الكارد الأساسي
+                          Card(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16)),
+                            elevation: 4,
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                gradient: LinearGradient(
+                                  colors: [Colors.lightBlue, Colors.blue[800]!],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    weather.city,
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 26,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    weather.description,
+                                    style: const TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        '${weather.temp.round()}°C',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 48,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      Image.asset(
+                                        'assets/images/weather-icon.png',
+                                        width: 80,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    'Wind: ${weather.wind} m/s',
+                                    style: const TextStyle(
+                                        color: Colors.white70, fontSize: 14),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+
+                          // 🔄 التوقعات
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Forecast (5 days)',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey[800],
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            height: 120,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: forecast.length,
+                              itemBuilder: (context, index) {
+                                final f = forecast[index];
+                                return Container(
+                                  width: 100,
+                                  margin: const EdgeInsets.only(right: 10),
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black12,
+                                        blurRadius: 6,
+                                        offset: const Offset(2, 2),
+                                      )
+                                    ],
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.wb_sunny, color: Colors.orange),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        '${f.temp.round()}°C',
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        f.description,
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                        ],
+                      );
+                    } else if (state is WeatherError) {
+                      return Center(
+                          child: Text(state.message,
+                              style: const TextStyle(color: Colors.red)));
+                    }
+                    return const Center(
+                        child: Text('Search for a city to get weather.'));
+                  },
+                ),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('${day.temp}°C', style: const TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 4),
-                  Text(day.description),
-                ],
-              ),
-            );
-          },
-        ),
-      )
-    ],
-  );
-} else if (state is WeatherError) {
-                  return Text(state.message, style: const TextStyle(color: Colors.red));
-                }
-                return const Text('أدخل المدينة أولاً');
-              },
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
